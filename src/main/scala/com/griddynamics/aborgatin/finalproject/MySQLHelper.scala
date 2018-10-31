@@ -1,7 +1,8 @@
 package com.griddynamics.aborgatin.finalproject
 
 object MySQLHelper {
-  private val url = "jdbc:mysql://localhost:3306/ab"
+//  private val url = "jdbc:mysql://localhost:3306/ab"
+  private val url = "jdbc:mysql://10.0.0.21:3306/ab"
   private val prop = new java.util.Properties
   prop.setProperty("driver", "com.mysql.jdbc.Driver")
   prop.setProperty("user", "root")
