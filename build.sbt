@@ -12,5 +12,4 @@ libraryDependencies += "org.apache.spark" %% "spark-sql" % sparkVersion
 libraryDependencies += "org.apache.spark" %% "spark-hive" % sparkVersion
 libraryDependencies +=  "org.apache.hadoop" % "hadoop-client" % "2.6.0"
 libraryDependencies +=  "commons-net" % "commons-net" % "3.6"
-libraryDependencies += "mysql" % "mysql-connector-java" % "5.1.6"
 
