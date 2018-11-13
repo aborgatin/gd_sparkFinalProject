@@ -25,7 +25,7 @@ object Ex6 {
   case class GeoJoined(ipMask: String, countryName: String)
 
   def main(args: Array[String]) = {
-    var path = "/user/aborgatin/events/*"
+    var path = "events2/*"
     if (args.length == 1) {
       path = args(0)
     }
@@ -49,7 +49,7 @@ object Ex6 {
     val locationsForJoin = locations.filter(r => r != headerLocations).map(_.split(",")).map(r => GeoLocation(r(0), r(5))).toDF()
     val geoJoinedSimple = blocksForJoin.join(locationsForJoin, blocksForJoin("countryId") === locationsForJoin("countryId"), "LeftOuter").map(r => GeoJoined(r.getString(0), r.getString(3))).toDF()
     val applyMaskUdf = org.apache.spark.sql.functions.udf((ip: String, mask: String) => applyMask(ip, mask))
-    val df1 = dfSimple.join(geoJoinedSimple, applyMaskUdf(dfSimple("ipAddress"), geoJoinedSimple("ipMask")), "LeftOuter")
+    val df1 = dfSimple.join(broadcast(geoJoinedSimple), applyMaskUdf(dfSimple("ipAddress"), geoJoinedSimple("ipMask")), "LeftOuter")
     val df2 = df1.map(r => (r.getString(3), r.getString(0).trim.toFloat)).filter(_._1 != null).toDF("country", "money_spending")
     val df3 = df2.groupBy("country").sum("money_spending").sort(desc("sum(money_spending)")).limit(10).toDF("country", "money_spending")
     df3.toDF().write.mode(SaveMode.Overwrite).jdbc(url, "ex6_spark_df", prop)
