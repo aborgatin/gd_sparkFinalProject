@@ -36,11 +36,11 @@ object Ex6 {
           NetworkUtils.maskToBound(r._2._1, false), //high ip bound
             r._2._2)) //country name
         .sortBy(_._1)
-      .collect()
+    val br = sc.broadcast(geoJoinedSimple)
 
     val result = dfSimple.map(
       r => (
-        NetworkUtils.getCountry(geoJoinedSimple, r._1),
+        NetworkUtils.getCountry(br, r._1),
         r._2.trim.toDouble
       )
     )

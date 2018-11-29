@@ -1,33 +1,31 @@
 package com.griddynamics.aborgatin.finalproject
 
 import org.apache.commons.net.util.SubnetUtils
-import org.apache.spark.sql.{Column, DataFrame}
+import org.apache.spark.broadcast.Broadcast
+import org.apache.spark.rdd.RDD
 
 object NetworkUtils {
 
-
-  def getCountry(range: Array[(Long, Long, String)], ip: Long): String = {
-    var left = 0
-    var right = range.length
-    var mid = 0
-    while (!(left >= right)) {
-      mid = left + (right - left)/2
-      if (ip >= range(mid)._1 && ip <= range(mid)._2)
-        return range(mid)._3
-      if (range(mid)._1 > ip)
-        right = mid
+  def getCountry(br: Broadcast[RDD[(Long, Long, String)]], ip: Long): String = {
+      var range = br.value.collect()
+      var left = 0
+      var right = range.length
+      var mid = 0
+      while (!(left >= right)) {
+        mid = left + (right - left)/2
+        if (ip >= range(mid)._1 && ip <= range(mid)._2)
+          return range(mid)._3
+        if (range(mid)._1 > ip)
+          right = mid
+        else
+          left = mid + 1
+      }
+      val res = left - 1
+      if (res > 0 && ip >= range(res)._1 && ip <= range(res)._2)
+        range(res)._3
       else
-        left = mid + 1
+        null
     }
-    val res = left - 1
-    if (res > 0 && ip >= range(res)._1 && ip <= range(res)._2)
-      range(res)._3
-    else
-      null
-  }
-  def getColumn(column: Column, frame: DataFrame): Column = {
-    column
-  }
 
 
   def maskToBound(mask: String, isLow: Boolean): Long = {
