@@ -7,25 +7,25 @@ import org.apache.spark.rdd.RDD
 object NetworkUtils {
 
   def getCountry(br: Broadcast[RDD[(Long, Long, String)]], ip: Long): String = {
-      var range = br.value.collect()
-      var left = 0
-      var right = range.length
-      var mid = 0
-      while (!(left >= right)) {
-        mid = left + (right - left)/2
-        if (ip >= range(mid)._1 && ip <= range(mid)._2)
-          return range(mid)._3
-        if (range(mid)._1 > ip)
-          right = mid
-        else
-          left = mid + 1
-      }
-      val res = left - 1
-      if (res > 0 && ip >= range(res)._1 && ip <= range(res)._2)
-        range(res)._3
+    val range = br.value.collect()
+    var left = 0
+    var right = range.length
+    var mid = 0
+    while (!(left >= right)) {
+      mid = left + (right - left) / 2
+      if (ip >= range(mid)._1 && ip <= range(mid)._2)
+        return range(mid)._3
+      if (range(mid)._1 > ip)
+        right = mid
       else
-        null
+        left = mid + 1
     }
+    val res = left - 1
+    if (res > 0 && ip >= range(res)._1 && ip <= range(res)._2)
+      range(res)._3
+    else
+      null
+  }
 
 
   def maskToBound(mask: String, isLow: Boolean): Long = {
